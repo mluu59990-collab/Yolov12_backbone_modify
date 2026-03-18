@@ -70,6 +70,9 @@ from ultralytics.nn.modules import (
     CoordAtt,
     C2f_CA,
     C3k2_CA,
+    CBAM,
+    C2f_CBAM,
+    C3k2_CBAM,
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, colorstr, emojis, yaml_load
 from ultralytics.utils.checks import check_requirements, check_suffix, check_yaml
@@ -986,9 +989,11 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             C2f,
             C2f_ECA,
             C2f_CA,
+            C2f_CBAM,
             C3k2,
             C3k2_ECA,
             C3k2_CA,
+            C3k2_CBAM,
             RepNCSPELAN4,
             ELAN1,
             ADown,
@@ -1007,6 +1012,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             C2fCIB,
             A2C2f,
             CoordAtt,
+            CBAM,
         }:
             c1, c2 = ch[f], args[0]
             if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
@@ -1025,9 +1031,11 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 C2f,
                 C2f_ECA,
                 C2f_CA,
+                C2f_CBAM,
                 C3k2,
                 C3k2_ECA,
                 C3k2_CA,
+                C3k2_CBAM,
                 C2fAttn,
                 C3,
                 C3TR,
@@ -1041,7 +1049,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             }:
                 args.insert(2, n)  # number of repeats
                 n = 1
-            if m in {C3k2, C3k2_ECA, C3k2_CA}:
+            if m in {C3k2, C3k2_ECA, C3k2_CA, C3k2_CBAM}:
                 legacy = False
                 if scale in "mlx":
                     args[3] = True

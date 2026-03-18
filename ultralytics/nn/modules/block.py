@@ -53,6 +53,9 @@ __all__ = (
     "ECA",
     "C3k2_ECA",
     "C2f_ECA",
+    "CBAM",
+    "C2f_CBAM",
+    "C3k2_CBAM",
 )
 
 
@@ -1489,3 +1492,75 @@ class C3k2_CA(nn.Module):
         y = self.block(x)
         y = self.ca(y)
         return y
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class ChannelAttention(nn.Module):
+    def __init__(self, channels, reduction=16):
+        super().__init__()
+        hidden = max(channels // reduction, 8)
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.max_pool = nn.AdaptiveMaxPool2d(1)
+        self.mlp = nn.Sequential(
+            nn.Conv2d(channels, hidden, 1, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(hidden, channels, 1, bias=False),
+        )
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        avg_out = self.mlp(self.avg_pool(x))
+        max_out = self.mlp(self.max_pool(x))
+        return self.sigmoid(avg_out + max_out)
+
+
+class SpatialAttention(nn.Module):
+    def __init__(self, kernel_size=7):
+        super().__init__()
+        padding = 3 if kernel_size == 7 else 1
+        self.conv = nn.Conv2d(2, 1, kernel_size, padding=padding, bias=False)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        avg_out = torch.mean(x, dim=1, keepdim=True)
+        max_out, _ = torch.max(x, dim=1, keepdim=True)
+        x = torch.cat([avg_out, max_out], dim=1)
+        return self.sigmoid(self.conv(x))
+
+
+class CBAM(nn.Module):
+    def __init__(self, channels, reduction=16, kernel_size=7):
+        super().__init__()
+        self.ca = ChannelAttention(channels, reduction=reduction)
+        self.sa = SpatialAttention(kernel_size=kernel_size)
+
+    def forward(self, x):
+        x = x * self.ca(x)
+        x = x * self.sa(x)
+        return x
+
+
+class C2f_CBAM(C2f):
+    def __init__(self, c1, c2, n=1, shortcut=False, g=1, e=0.5, reduction=16):
+        super().__init__(c1, c2, n=n, shortcut=shortcut, g=g, e=e)
+        self.cbam = CBAM(c2, reduction=reduction)
+
+    def forward(self, x):
+        x = super().forward(x)
+        return self.cbam(x)
+
+    def forward_split(self, x):
+        x = super().forward_split(x)
+        return self.cbam(x)
+
+
+class C3k2_CBAM(C3k2):
+    def __init__(self, c1, c2, n=1, c3k=False, e=0.5, g=1, shortcut=True, reduction=16):
+        super().__init__(c1, c2, n=n, c3k=c3k, e=e, g=g, shortcut=shortcut)
+        self.cbam = CBAM(c2, reduction=reduction)
+
+    def forward(self, x):
+        x = super().forward(x)
+        return self.cbam(x)
