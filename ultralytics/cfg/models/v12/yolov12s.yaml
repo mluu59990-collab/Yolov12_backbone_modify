@@ -91,7 +91,7 @@
 # YOLOv12 - A2C2f -> C2f_CA
 # Mục tiêu: nhẹ hơn, nhanh hơn, cố giữ hoặc tăng nhẹ mAP so với baseline
 
-nnc: 80
+nc: 80
 scale: s
 
 scales:
