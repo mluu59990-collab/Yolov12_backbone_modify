@@ -59,6 +59,7 @@ __all__ = (
     "CoordAtt",
     "C2f_CA",
     "C3k2_CA",
+    "A2C2f_ECA",
 )
 
 
@@ -1567,3 +1568,23 @@ class C3k2_CBAM(C3k2):
     def forward(self, x):
         x = super().forward(x)
         return self.cbam(x)
+class A2C2f_ECA(nn.Module):
+    def __init__(self, c1, c2, n=1, a2=True, area=1, residual=False, mlp_ratio=2.0, e=0.5, g=1, shortcut=True):
+        super().__init__()
+        self.block = A2C2f(
+            c1=c1,
+            c2=c2,
+            n=n,
+            a2=a2,
+            area=area,
+            residual=residual,
+            mlp_ratio=mlp_ratio,
+            e=e,
+            g=g,
+            shortcut=shortcut,
+        )
+        self.eca = ECA(c2)
+
+    def forward(self, x):
+        x = self.block(x)
+        return self.eca(x)

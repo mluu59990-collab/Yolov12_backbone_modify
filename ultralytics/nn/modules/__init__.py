@@ -184,4 +184,5 @@ __all__ = (
     "CBAM",
     "C2f_CBAM",
     "C3k2_CBAM",
+    "A2C2f_ECA",
 )
