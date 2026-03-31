@@ -48,12 +48,7 @@ The final selected configuration demonstrated the best overall improvement over 
 
 ## Experimental Results
 
-| Model | Precision | Recall | mAP@0.5 | mAP@0.5:0.95 | Params | FLOPs | Speed |
-|------|-----------|--------|---------|--------------|--------|-------|-------|
-| YOLOv10s-100ep | 0.706 | 0.538 | 0.613 | 0.343 | 8.06M | 24.8G | 8.6 ms/img |
-| YOLOv12s-100ep | 0.728 | 0.524 | 0.610 | 0.350 | 9.09M | 19.6G | 7.2 ms/img |
-| YOLOv11s-100ep | 0.727 | 0.546 | 0.633 | 0.359 | 9.43M | 21.55G | 5.1 ms/img |
-| Modified YOLOv12s | **0.750** | **0.550** | **0.644** | **0.369** | 9.75M | 20.5G | **4.6 ms/img** |
+
 
 ## Tech Stack
 
