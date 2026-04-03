@@ -68,7 +68,12 @@ The final selected configuration demonstrated the best overall improvement over 
 
 ## Demo
 
-https://github.com/user-attachments/assets/0a64af6b-ba33-4137-87ac-fd8553079e4a
+
+https://github.com/user-attachments/assets/e0ff2b49-3630-42af-866a-4065a8ac5a31
+
+
+
+
 ## Future Work
 
 - Explore additional lightweight attention modules
